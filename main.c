@@ -3,6 +3,13 @@
 #include <stdbool.h>
 #define TAM 6
 
+typedef struct nodo{
+char atual;
+struct nodo *no0[2];
+struct nodo *no1[2];
+bool fim;
+} nodo;
+
 bool loop1(char* entrada, int i);
 
 
@@ -20,21 +27,89 @@ entrada[4]='1';
 return entrada;
 }
 
-char* lerAFD(){
-char *entrada = malloc(sizeof(int) * 9);
+void criaAF(nodo* no){
+    no=malloc(sizeof(nodo));
+    no->atual='0';
+    no->no0[0]=NULL;
+    no->no0[1]=NULL;
+    no->no1[0]=NULL;
+    no->no1[1]=NULL;
+}
 
-//pega a entrada do arquivo e passa pro vetor
-entrada[0]='(';
-entrada[1]='0';
-entrada[2]='U';
-entrada[3]='1';
-entrada[4]=')';
-entrada[5]='*';
-entrada[6]='U';
-entrada[7]='1';
-//exemplo pra teste
+nodo* procuraNo(nodo *no, char fim){
+    nodo *atual = no;
+    if(atual->atual==fim)
+        return atual;
+    if(atual->no0[0]!=NULL && atual->no0[0]->atual!=atual->atual)
+            return procuraNo(atual->no0[0],fim);
+    else if(atual->no0[1]!=NULL && atual->no0[1]->atual!=atual->atual)
+            return procuraNo(atual->no0[1],fim);
+    if(atual->no1[0]!=NULL && atual->no1[0]->atual!=atual->atual)
+            return procuraNo(atual->no1[0],fim);
+    else if(atual->no1[1]!=NULL && atual->no1[1]->atual!=atual->atual)
+            return procuraNo(atual->no1[1],fim);
+    return NULL;
 
-return entrada;
+}
+
+void defineFim(nodo *no, char fim){
+    nodo *atual=procuraNo(no,fim);
+    atual->fim=true;
+}
+
+void insere(nodo *no,char atual, char destino, char condicao){
+    nodo *at=procuraNo(no,atual);
+    nodo *nod;
+    if(procuraNo(no,destino)==NULL){
+        switch(condicao){
+        case '0':
+            nod=malloc(sizeof(nodo));
+            nod->atual=atual;
+            nod->no0[0]=NULL;
+            nod->no0[1]=NULL;
+            nod->no1[0]=NULL;
+            nod->no1[1]=NULL;
+            if(at->no0[0]==NULL)
+                at->no0[0]=nod;
+            else
+                at->no0[1]=nod;
+            break;
+        case '1':
+            nod=malloc(sizeof(nodo));
+            nod->atual=atual;
+            nod->no0[0]=NULL;
+            nod->no0[1]=NULL;
+            nod->no1[0]=NULL;
+            nod->no1[1]=NULL;
+            if(at->no1[0]==NULL)
+                at->no1[0]=nod;
+            else
+                at->no1[1]=nod;
+            break;
+        }
+    }
+    else {
+        nod=procuraNo(no,destino);
+        switch(condicao){
+        case '0':
+            at->no0[0]=nod;
+            break;
+        case '1':
+            at->no1[0]=nod;
+            break;
+    }
+
+}
+}
+
+void lerAFD(nodo* no){
+int i=0;
+nodo* estado;
+while(i<TAM){//EOF
+
+
+
+}
 }
 
 bool testeFim(char* entrada, int i){
@@ -101,7 +176,7 @@ bool automatoAFD(char* entrada){
 int main()
 {
     char *entrada = lerArquivo();
-    char *AFD = lerAFD();
+    //char *AFD = lerAFD();
     bool testeAFD = automatoAFD(entrada);
     bool testeAFN = automatoAFN(entrada);
     if(testeAFD == testeAFN){
@@ -110,6 +185,6 @@ int main()
     else
         printf("chora");
     free(entrada);
-    free(AFD);
+//    free(AFD);
     return 0;
 }
