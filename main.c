@@ -92,10 +92,16 @@ void insere(nodo *no,char atual, char destino, char condicao){
         nod=procuraNo(no,destino);
         switch(condicao){
         case '0':
-            at->no0[0]=nod;
+            if(at->no0[0]==NULL)
+                at->no0[0]=nod;
+            else
+                at->no0[1]=nod;
             break;
         case '1':
-            at->no1[0]=nod;
+            if(at->no1[0]==NULL)
+                at->no1[0]=nod;
+            else
+                at->no1[1]=nod;
             break;
     }
 
